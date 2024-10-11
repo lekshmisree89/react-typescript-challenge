@@ -3,64 +3,80 @@ import { searchGithub, searchGithubUser } from '../api/API';
 
 interface Candidate {
   id: number; 
- avatar_url: string;
- location: string;
-email: string;
- company: string;
- bio: string;
+  avatar_url: string;
+  location: string;
+  email: string;
+  company: string;
+  bio: string;
+  name: string;
+  login: string;
+  html_url: string;
 }
 
 const CandidateSearch = () => {
-  const [search, setSearch] = useState<string>();
+  const [search, setSearch] = useState<string>('');
+
+  // Fetch candidates based on search query
   const [results, setResults] = useState<Candidate[]>([]);
-  const [error, setError] = useState<string|null>();
-  // Add necessary code to handle the search form submission
-  // and display the search results
-  const handleSearch  = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    try {
-      const data = search? await searchGithubUser(search): await searchGithub();
-   if (Array.isArray(data)){
-      setResults(data);
-   }
-    else {
-      setResults([data]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [savedCandidates, setSavedCandidates] = useState<Candidate[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-    }
-    }catch (err: any) {
-      const message = err.message || 'An error occurred';
-      setError(message);
-    }
-
-  }
+  // Fetch initial candidates
   useEffect(() => {
-    searchGithub().then((data) => setResults(data));
-  }, [])  
+    const fetchInitialData = async () => {
+      try {
+        const data = await searchGithub();
+        setResults(data);
+      } catch (err: any) {
+        const message = err.message || 'An error occurred';
+        setError(message);
+      }
+    };
+    fetchInitialData();
+  }, []);
 
-  return(
-  <div className="container">
-    <h1>CandidateSearch</h1>
-    <form onSubmit={handleSearch}>
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-      <button type="submit">Search</button>
-    </form>
-    {error && <div>{error}</div>}
-    {results.map((candidate) => (
-      <div key={candidate.id}>
-        <img src={candidate.avatar_url} alt="avatar" />
-        <div>{candidate.location}</div>
-        <div>{candidate.email}</div>
-        <div>{candidate.company}</div>
-        <div>{candidate.bio}</div>
-      </div>
-    ))} 
-  </div>
-);
+  // Handle saving a candidate and moving to the next one
+  const saveCandidate = () => {
+    const currentCandidate = results[currentIndex];
+    const updatedSavedCandidates = [...savedCandidates, currentCandidate];
+    
+    // Save to localStorage
+    localStorage.setItem('savedCandidates', JSON.stringify(updatedSavedCandidates));
+    setSavedCandidates(updatedSavedCandidates);
+    
+    // Move to the next candidate
+    setCurrentIndex((prevIndex) => prevIndex + 1);
+  };
+
+  // Handle skipping a candidate
+  const skipCandidate = () => {
+    setCurrentIndex((prevIndex) => prevIndex + 1);
+  };
+
+  return (
+    <div className="container">
+      <h1>Candidate Search</h1>
+      {error && <div>{error}</div>}
+      {results.length > 0 && currentIndex < results.length ? (
+        <div key={results[currentIndex].id}>
+          <img src={results[currentIndex].avatar_url} alt="avatar" />
+          <div>Name: {results[currentIndex].name}</div>
+          <div>Username: {results[currentIndex].login}</div>
+          <div>Location: {results[currentIndex].location}</div>
+          <div>Email: {results[currentIndex].email}</div>
+          <div>Company: {results[currentIndex].company}</div>
+          <a href={results[currentIndex].html_url} target="_blank" rel="noreferrer">GitHub Profile</a>
+          <div>
+            <button onClick={saveCandidate}>+</button>
+            <button onClick={skipCandidate}>-</button>
+          </div>
+        </div>
+      ) : (
+        <div>No more candidates available for review.</div>
+      )}
+    </div>
+  );
 };
 
 export default CandidateSearch;
