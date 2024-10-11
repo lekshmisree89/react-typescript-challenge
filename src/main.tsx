@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import './index.css';
+import './index.css'; // Assuming this file contains global styles
 
 import App from './App.tsx';
 import CandidateSearch from './pages/CandidateSearch.tsx';

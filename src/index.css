@@ -118,3 +118,29 @@ tbody tr:nth-child(odd) {
   width: 80vw;
   table-layout: fixed;
 }
+
+th {
+  text-align: left;
+  padding: 0.5em 1em;
+  background-color: #000;
+  color: white;
+}
+  container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  .img {
+    width: 100%;
+    height: 100%;
+  } 
