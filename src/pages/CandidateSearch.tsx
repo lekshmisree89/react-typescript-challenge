@@ -13,27 +13,7 @@ interface Candidate {
   html_url: string;
 }
 
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  input: {
-    margin: '10px',
-  },
-  button: {
-    margin: '10px',
-  },
-   img:{
-    width: '100px',
-    height: '100px',
-    borderRadius: '50%',
-    objectFit : 'cover'
-   }
-};
-
+  
 
 const CandidateSearch = () => {
   const [search, setSearch] = useState<string>('');
