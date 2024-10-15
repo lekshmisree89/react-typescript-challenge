@@ -32,7 +32,7 @@ const SavedCandidates = () => {
 
   return (
     <div className="container">
-      <h1>Saved Candidates</h1>
+      <h1>Potential Candidates</h1>
       {savedCandidates.length > 0 ? (
         savedCandidates.map((candidate) => (
           <div key={candidate.id} className="candidate">
