@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { searchGithub ,searchGithubUser} from '../api/API'; // Assuming searchGithub is the main function
+import { searchGithub, searchGithubUser } from '../api/API'; // Assuming searchGithub is the main function
 
 interface Candidate {
   id: number;
@@ -13,7 +13,7 @@ interface Candidate {
   html_url: string;
 }
 
-  
+
 
 const CandidateSearch = () => {
   const [search, setSearch] = useState<string>('');
@@ -28,7 +28,7 @@ const CandidateSearch = () => {
       try {
         const data = await searchGithub(); // Assuming searchGithub fetches data
         setResults(data);
-        
+
       } catch (err: any) {
         const message = err.message || 'An error occurred';
         setError(message);
@@ -46,12 +46,12 @@ const CandidateSearch = () => {
 
   // Handle saving a candidate and moving to the next one
   const saveCandidate = () => {
-    if (currentIndex >= results.length) 
-    return;
+    if (currentIndex >= results.length)
+      return;
 
     const currentCandidate = results[currentIndex];
     const updatedSavedCandidates = [...savedCandidates, currentCandidate];
-    
+
     // Save to localStorage
     localStorage.setItem('savedCandidates', JSON.stringify(updatedSavedCandidates));
     setSavedCandidates(updatedSavedCandidates);
@@ -67,19 +67,17 @@ const CandidateSearch = () => {
     }
   };
 
-   const handleSearch = async () => {
+  const handleSearch = async () => {
     try {
       const data = await searchGithubUser(search);
-      setResults(data);
+      setResults([data]);
+      setCurrentIndex(0);;
     } catch (err: any) {
       const message = err.message || 'An error occurred';
       setError(message);
     }
   }
-   //how to use handle search function
-    
-
-
+  //how to use handle search function
 
   return (
     <div className="container">
@@ -88,8 +86,8 @@ const CandidateSearch = () => {
 
       {results.length > 0 && currentIndex < results.length ? (
         <div key={results[currentIndex].id}>
-        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
-      <button onClick={handleSearch}>Search</button>
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <button onClick={handleSearch}>Search</button>
           <h2>Candidate {currentIndex + 1}</h2>
           <img src={results[currentIndex].avatar_url} alt="avatar" />
           <div>Name: {results[currentIndex].name || 'N/A'}</div>
@@ -100,7 +98,7 @@ const CandidateSearch = () => {
           <a href={results[currentIndex].html_url} target="_blank" rel="noreferrer">
             GitHub Profile
           </a>
-         
+
           <div>
             <button onClick={saveCandidate}> +</button>
             <button onClick={skipCandidate}>-</button>
