@@ -58,7 +58,7 @@ Candidate information with options to accept or skip.
 
 
 # List of saved candidates with their details.
-![saved candidates](image-1.png)
+![saved candidate page](image-2.png)
 
 
 
