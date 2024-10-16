@@ -24,15 +24,21 @@ const SavedCandidates = () => {
   // Handle deleting a candidate
   const deleteCandidate = (candidateId: number) => {
     const updatedCandidates = savedCandidates.filter((candidate) => candidate.id !== candidateId);
-    
+      if (window.confirm('Are you sure you want to delete this candidate?')) {
+        const updatedCandidates = savedCandidates.filter((candidate) => candidate.id !== candidateId);
+        setSavedCandidates(updatedCandidates);
+        localStorage.setItem('savedCandidates', JSON.stringify(updatedCandidates));
+      }
+  
     // Update state and localStorage
     setSavedCandidates(updatedCandidates);
     localStorage.setItem('savedCandidates', JSON.stringify(updatedCandidates));
   };
+  
 
   return (
     <div className="container">
-      <h1>Potential Candidates</h1>
+      <h1>Potential candidates</h1>
       {savedCandidates.length > 0 ? (
         savedCandidates.map((candidate) => (
           <div key={candidate.id} className="candidate">

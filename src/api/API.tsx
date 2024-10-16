@@ -7,8 +7,10 @@ const searchGithub = async () => {
     const response = await fetch(
       `https://api.github.com/users?since=${start}`,
       {
+        
         headers: {
           Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`,
+          
         },
       }
     );
