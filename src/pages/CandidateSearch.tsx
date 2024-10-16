@@ -2,18 +2,8 @@ import { useState, useEffect } from 'react';
 import { searchGithub, searchGithubUser } from '../api/API'; // Assuming searchGithub is the main function
 
 
-//import { Candidate } from '../interfaces/Candidate.interface';
-interface Candidate {
-  id: number;
-  avatar_url: string;
-  location: string;
-  email: string;
-  bio: string;
-  name: string;
-  login: string;
-  html_url: string;
-  company: string;
-}
+import Candidate  from '../interfaces/Candidate.interface';
+
 
 
 const CandidateSearch = () => {
