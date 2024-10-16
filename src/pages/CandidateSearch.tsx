@@ -16,28 +16,27 @@ interface Candidate {
 }
 
 
-
 const CandidateSearch = () => {
   const [search, setSearch] = useState<string>('');
   const [results, setResults] = useState<Candidate[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [savedCandidates, setSavedCandidates] = useState<Candidate[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false); // New loading state
 
-  // Fetch initial candidates and check saved candidates in localStorage
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const data = await searchGithub(); // Assuming searchGithub fetches data
+        setLoading(true); // Start loading
+        const data = await searchGithub();
         setResults(data);
-
       } catch (err: any) {
-        const message = err.message || 'An error occurred';
-        setError(message);
+        setError(err.message || 'An error occurred');
+      } finally {
+        setLoading(false); // End loading
       }
     };
 
-    // Load saved candidates from localStorage if available
     const saved = localStorage.getItem('savedCandidates');
     if (saved) {
       setSavedCandidates(JSON.parse(saved));
@@ -46,23 +45,15 @@ const CandidateSearch = () => {
     fetchInitialData();
   }, []);
 
-  // Handle saving a candidate and moving to the next one
   const saveCandidate = () => {
-    if (currentIndex >= results.length)
-      return;
-
+    if (currentIndex >= results.length) return;
     const currentCandidate = results[currentIndex];
     const updatedSavedCandidates = [...savedCandidates, currentCandidate];
-
-    // Save to localStorage
     localStorage.setItem('savedCandidates', JSON.stringify(updatedSavedCandidates));
     setSavedCandidates(updatedSavedCandidates);
-
-    // Move to the next candidate, if available
     setCurrentIndex((prevIndex) => (prevIndex + 1 < results.length ? prevIndex + 1 : prevIndex));
   };
 
-  // Handle skipping a candidate
   const skipCandidate = () => {
     if (currentIndex < results.length - 1) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
@@ -71,39 +62,71 @@ const CandidateSearch = () => {
 
   const handleSearch = async () => {
     try {
+      setLoading(true); // Start loading
+      setError(null); // Reset error state
       const data = await searchGithubUser(search);
-      setResults([data]);
-      setCurrentIndex(0);;
+      setResults([data]); // Set search result as single user
+      setCurrentIndex(0);
     } catch (err: any) {
-      const message = err.message || 'An error occurred';
-      setError(message);
+      setError(err.message || 'User not found or an error occurred');
+    } finally {
+      setLoading(false); // End loading
     }
-  }
-  //how to use handle search function
+  };
 
   return (
     <div className="container">
       <h1>Candidate Search</h1>
-      {error && <div>{error}</div>}
+      {error && <div style={{ color: 'red' }}>{error}</div>}
+      <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
+      <button onClick={handleSearch}>Search</button>
 
-      {results.length > 0 && currentIndex < results.length ? (
+      {loading ? (
+        <div>Loading...</div> // Show loading indicator while fetching data
+      ) : results.length > 0 && currentIndex < results.length ? (
         <div key={results[currentIndex].id}>
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
-          <button onClick={handleSearch}>Search</button>
           <h2>Candidate {currentIndex + 1}</h2>
-          <img src={results[currentIndex].avatar_url} alt="avatar" />
+          <img src={results[currentIndex].avatar_url} alt="avatar" 
+          style={{width: '100px', height: '100px', borderRadius: '50%' }}
+          
+          />
           <div>Name: {results[currentIndex].name || 'N/A'}</div>
           <div>Username: {results[currentIndex].login}</div>
           <div>Location: {results[currentIndex].location || 'Not provided'}</div>
-          <div>Email: {results[currentIndex].email || 'Not provided'}</div>
+          <div>Email: {results[currentIndex]. email || 'Not provided'}</div>
           <div>Company: {results[currentIndex].company || 'Not provided'}</div>
           <a href={results[currentIndex].html_url} target="_blank" rel="noreferrer">
             GitHub Profile
           </a>
 
           <div>
-            <button onClick={saveCandidate}> +</button>
-            <button onClick={skipCandidate}>-</button>
+            <button onClick={saveCandidate} 
+           style={{
+            backgroundColor: 'green',
+            color: 'white',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            marginRight: '10px',
+          }}
+            
+            
+            > +</button>
+            <button onClick={skipCandidate}
+            style={{
+              backgroundColor: 'red',
+              color: 'white',
+              padding: '10px 20px',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+            }}
+        
+
+
+
+            >-</button>
           </div>
         </div>
       ) : (
@@ -112,5 +135,4 @@ const CandidateSearch = () => {
     </div>
   );
 };
-
 export default CandidateSearch;

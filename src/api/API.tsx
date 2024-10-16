@@ -1,3 +1,5 @@
+import App from "../App";
+
 const searchGithub = async () => {
   try {
     const start = Math.floor(Math.random() * 100000000) + 1;
@@ -40,9 +42,10 @@ const searchGithubUser = async (username: string) => {
     return {};
   }
 };
-//seargithubuser is a function that takes a username 
-//as an argument and returns a promise that resolves to the user data 
-//from the github api
+
+
+
 
 
 export { searchGithub, searchGithubUser };
+export default App;
